@@ -58,12 +58,38 @@ public class Main {
      * Lista de livros
      */
     public static void showBooks() {
-
         System.out.println("\n\n\n*** Livros ****\n");
-        for(Book book : books) {
+        for (Book book : books) {
             System.out.println(book.toString());
         }
+    }
 
+    /**
+     * Listar destaques
+     */
+    public static void showHighlights() {
+        user.getFavorites().forEach(
+                book -> System.out.println(book.toString())
+        );
+    }
+
+    public static Book searchBook(String idxBook) {
+        for(Book book: books) {
+            if(book.getId().equals(idxBook))
+                return book;
+        }
+        return null;
+    }
+
+    public static boolean purcharseBook(String idxBook) {
+        Book book = searchBook(idxBook);
+        if(book != null) {
+            System.out.println("Compra efectuada!");
+            return user.getPurchasing().add(book);
+        } else {
+            System.out.println("Id não encontrado!");
+            return false;
+        }
     }
 
     /**
@@ -100,8 +126,8 @@ public class Main {
     public static void menu() {
         String menu =  "\n\nEscolha uma das seguintes opções:\n\n" +
                 "- Para listar livros pressiona tecla 1\n" + "- Para ver os livros em destaque para si pressione a tecla 2\n" +
-                "- Para comprar um livro, pressione tecla 3\n" + "- Para adicionar ao favorito pressionne a tecla 4\n" + "- Para listar a lista dos favoritos pressione a tecla 5\n" +
-                "- Sair da sessão pressione tecla 9";
+                "- Para comprar um livro, pressione tecla 3\n"+
+                "- Sair da sessão pressione tecla 4";
 
         boolean done = false;
         int input;
@@ -112,27 +138,30 @@ public class Main {
 
             switch (input) {
                 case 1:
+                    System.out.println("\n\n*** Lista dos livros ***");
                     showBooks();
+                    System.out.println("\n\n************************");
                     break;
                 case 2:
-
-                    throw new NotImplementedException(); //TODO To implement
+                    System.out.println("\n\n*** Lista dos destaques ***");
+                    showHighlights();
+                    System.out.println("\n\n***************************");
+                    break;
                 case 3:
-                    throw new NotImplementedException(); //TODO To implement
+                    System.out.println("\n\n*** Compra de Livros ***");
+                    showBooks();
+                    System.out.println("\n\nInsira o número do livros que pretende comprar: ");
+                    String idxBook = sc.next();
+                    purcharseBook(idxBook);
+                    System.out.println("\n\n************************");
+                    break;
                 case 4:
-                    throw new NotImplementedException(); //TODO To implement
-                case 5:
-                    throw new NotImplementedException(); //TODO To implement
-                case 6:
-                    throw new NotImplementedException(); //TODO To implement
-                case 9:
                     System.out.println("Logout efectuado! Obrigado pela visita!");
                     done = true;
                     break;
                 default:
                     System.out.println("Insira um número correcto!");
                     break;
-
             }
         }
 

@@ -11,7 +11,17 @@ public class User {
     private String genre;
     private int age;
     private List<Book> favorites;
+    private List<Book> purchasing;
 
+
+    public User(String username, String password, String genre, int age, List<Book> favorites, List<Book> purchasing) {
+        this.username = username;
+        this.password = password;
+        this.genre = genre;
+        this.age = age;
+        this.favorites = favorites;
+        this.purchasing = purchasing;
+    }
 
     public User(String username, String password, String genre, int age, List<Book> favorites) {
         this.username = username;
@@ -19,6 +29,7 @@ public class User {
         this.genre = genre;
         this.age = age;
         this.favorites = favorites;
+        this.purchasing = new ArrayList<>();
     }
 
     public User(String username, String password, String genre, int age) {
@@ -27,6 +38,7 @@ public class User {
         this.genre = genre;
         this.age = age;
         this.favorites = new ArrayList<>();
+        this.purchasing = new ArrayList<>();
     }
 
     public void setGenre(String genre) { this.genre = genre; }
@@ -61,5 +73,8 @@ public class User {
         this.favorites = favorites;
     }
 
+    public void setPurchasing(List<Book> purchasing) { this.purchasing = purchasing; }
+
+    public List<Book> getPurchasing() { return purchasing; }
 
 }
