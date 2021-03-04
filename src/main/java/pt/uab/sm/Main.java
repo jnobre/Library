@@ -3,7 +3,6 @@ package pt.uab.sm;
 import pt.uab.sm.model.Book;
 import pt.uab.sm.model.Category;
 import pt.uab.sm.model.User;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
