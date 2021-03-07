@@ -4,6 +4,8 @@ import pt.uab.sm.model.Book;
 import pt.uab.sm.model.Category;
 import pt.uab.sm.model.User;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -11,6 +13,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -18,6 +21,9 @@ public class Main {
     public static List<Book> books = new ArrayList<>();
     public static User user;
     public static Scanner sc = new Scanner(System.in);
+    public static String usersFile = "users.txt";
+    public static String booksFile = "books.txt";
+    public static String purcharseFile = "purcharse.txt";
 
     /**
      * Carrega para memoria os users a partir do ficheiro users.txt. As caracteristicas dos users estão separadas por espaços em branco
@@ -25,12 +31,17 @@ public class Main {
      * @throws IOException
      */
     public static void loaaUsers() throws URISyntaxException, IOException {
-        String fileName = "users.txt";
-
-        Files.lines(Paths.get(ClassLoader.getSystemResource(fileName).toURI())).forEach(line -> {
+        Files.lines(Paths.get(ClassLoader.getSystemResource(usersFile).toURI())).forEach(line -> {
             String[] data = line.split(" ");
-            users.add( new User(data[0], data[1], data[2], Integer.parseInt(data[3])) );
+            List<Integer> friends = new ArrayList<Integer>();
+            if(data.length == 6)
+                friends =
+                    Arrays.stream(data[5].split(",")).map(Integer::parseInt).collect(Collectors.toList());
+
+            users.add( new User(Integer.parseInt(data[0]), data[1], data[2], data[3], Integer.parseInt(data[4]), friends) );
         });
+
+        users.forEach(user -> System.out.println(user.toString()));
 
     }
 
@@ -40,17 +51,15 @@ public class Main {
      * @throws URISyntaxException
      * @throws IOException
      */
-    public static boolean loaaBooks() throws URISyntaxException, IOException {
-        String fileName = "books.txt";
+    public static void loaaBooks() throws URISyntaxException, IOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
 
-        Files.lines(Paths.get(ClassLoader.getSystemResource(fileName).toURI())).forEach(line -> {
+        Files.lines(Paths.get(ClassLoader.getSystemResource(booksFile).toURI())).forEach(line -> {
             String[] data = line.split(";");
             LocalDate date = LocalDate.parse(data[5].trim(), formatter);
             books.add( new Book(data[0].trim(), data[1].trim(), data[2].trim(), Category.valueOf(data[3].trim()), data[4].trim(), date) );
         });
 
-        return true;
     }
 
     /**
@@ -80,10 +89,16 @@ public class Main {
         return null;
     }
 
-    public static boolean purcharseBook(String idxBook) {
+    public static boolean purcharseBook(String idxBook) throws IOException, URISyntaxException {
         Book book = searchBook(idxBook);
+        String  dir = "src/main/resources/" + purcharseFile;
+        System.out.println("Dir = " + dir.toString());
         if(book != null) {
             System.out.println("Compra efectuada!");
+            BufferedWriter writer = new BufferedWriter(new FileWriter(dir, true));
+            writer.append(user.getUsername() + " " + book.getId());
+            writer.append('\n');
+            writer.close();
             return user.getPurchasing().add(book);
         } else {
             System.out.println("Id não encontrado!");
@@ -122,7 +137,7 @@ public class Main {
         }
     }
 
-    public static void menu() {
+    public static void menu() throws IOException, URISyntaxException {
         String menu =  "\n\nEscolha uma das seguintes opções:\n\n" +
                 "- Para listar livros pressiona tecla 1\n" + "- Para ver os livros em destaque para si pressione a tecla 2\n" +
                 "- Para comprar um livro, pressione tecla 3\n"+
